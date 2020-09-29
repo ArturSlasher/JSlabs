@@ -1,4 +1,5 @@
-let n = prompt('Enter n > 1', '2');
+//let n = prompt('Enter n > 1', '2');
+let n = 3;
 let startArrayInteger = 1;
 let mainArray = [];
 let runInteger = 0;

@@ -1,0 +1,12 @@
+{
+  "name": "lab5.2modulesapp",
+  "version": "1.0.0",
+  "description": "jsonTry",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node app.js Tom 26"
+  },
+  "author": "",
+  "license": "ISC"
+}
