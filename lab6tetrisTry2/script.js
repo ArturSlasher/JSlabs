@@ -11,16 +11,16 @@ let playfield = [
     [0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,1,0,0,0,0,0],
-    [0,0,0,0,1,0,0,0,0,0],
-    [0,0,0,0,1,1,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,2,2,0,0,0,0],
-    [0,0,0,0,2,2,0,0,0,0]
+    [0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0]
 ];
 
 let gameSpeed = 500;
@@ -41,6 +41,57 @@ function draw(){
         }
     }
     main.innerHTML = mainInnerHTML;
+}
+
+function drawRandomTetro(){
+    let nRandom = parseInt(Math.random() * 7);
+    //nRandom = 6;
+    switch (nRandom){
+        case 0: //палка
+            playfield[0][3] = 1;
+            playfield[0][4] = 1;
+            playfield[0][5] = 1;
+            playfield[0][6] = 1;
+            break;
+        case 1: //квадрат
+            playfield[0][4] = 1;
+            playfield[0][5] = 1;
+            playfield[1][4] = 1;
+            playfield[1][5] = 1;
+            break;
+        case 2: //кочерга L
+            playfield[0][4] = 1;
+            playfield[1][4] = 1;
+            playfield[2][4] = 1;
+            playfield[2][5] = 1;
+            break;
+        case 3: //обратная кочерга
+            playfield[0][5] = 1;
+            playfield[1][5] = 1;
+            playfield[2][5] = 1;
+            playfield[2][4] = 1;
+            break;
+        case 4: //пирамида
+            playfield[0][4] = 1;
+            playfield[1][3] = 1;
+            playfield[1][4] = 1;
+            playfield[1][5] = 1;
+            break;
+        case 5: //молния S
+            playfield[0][5] = 1;
+            playfield[0][6] = 1;
+            playfield[1][4] = 1;
+            playfield[1][5] = 1;
+            break;
+        case 6: //обратная молния Z
+            playfield[0][4] = 1;
+            playfield[0][5] = 1;
+            playfield[1][5] = 1;
+            playfield[1][6] = 1;
+            break;
+        default:
+            console.log("Error");
+    }
 }
 
 function canTetroMoveDown(){
@@ -133,6 +184,7 @@ function removeFullLines(){
         for(let x = 0; x < playfield[y].length; x++){
             if (playfield[y][x] != 2){
                 canRemoveLine = false;
+                break;
             }
         }
         if (canRemoveLine){
@@ -143,8 +195,8 @@ function removeFullLines(){
     }
 }
 
-function moveAllDown(yMax){
-    for(let y = 0; y < yMax; y++){
+function moveAllDown(yMax){ //after removing full line
+    for(let y = yMax; y >= 0; y--){
         for(let x = 0; x < playfield[y].length; x++){
             if (playfield[y][x] === 2){
                 playfield[y+1][x] = 2;
@@ -164,10 +216,12 @@ function fixTetro(){
     }
 
     removeFullLines();
-    playfield[0] = [0,0,0,1,1,0,0,0,0,0];
-    playfield[1] = [0,0,0,1,1,0,0,0,0,0];
+    drawRandomTetro();
+    /*playfield[0] = [0,0,0,1,1,0,0,0,0,0];
+    playfield[1] = [0,0,0,1,1,0,0,0,0,0];*/
 }
 
+drawRandomTetro();
 draw();
 
 document.onkeydown = function(e){
@@ -184,6 +238,10 @@ document.onkeydown = function(e){
         //down
         moveTetroDown();
     }
+    else if (e.keyCode === 32){ //38
+        //rotate
+        rotateTetro();
+    }
     draw();
 }
 
@@ -194,3 +252,230 @@ function startGame(){
 }
 
 setTimeout(startGame, gameSpeed);
+
+
+
+
+
+
+
+
+
+function rotateTetro(){
+    for(let y = 0; y < playfield.length; y++){
+        for(let x = 0; x < playfield[y].length; x++){
+            if (playfield[y][x] === 1){
+                //лежащая палка
+                if (y < playfield.length-3 && y >= 0 &&
+                    playfield[y][x+1] === 1 && playfield[y][x+2] === 1 && playfield[y][x+3] === 1 &&
+                    playfield[y+1][x+1] != 2 && playfield[y+2][x+1] != 2 && playfield[y+3][x+1] != 2)
+                {
+                    playfield[y][x] = 0;
+                    playfield[y][x+2] = 0;
+                    playfield[y][x+3] = 0;
+                    playfield[y+1][x+1] = 1;
+                    playfield[y+2][x+1] = 1;
+                    playfield[y+3][x+1] = 1;
+                    draw();
+                    return true;
+                }
+                //стоящая палка
+                if (x > 1 && x < playfield[y].length-1 && y >= 0 &&
+                    playfield[y+1][x] === 1 && playfield[y+2][x] === 1 && playfield[y+3][x] === 1 &&
+                    playfield[y+1][x-2] != 2 && playfield[y+1][x-1] != 2 && playfield[y+1][x+1] != 2)
+                {
+                    playfield[y][x] = 0;
+                    playfield[y+2][x] = 0;
+                    playfield[y+3][x] = 0;
+                    playfield[y+1][x-2] = 1;
+                    playfield[y+1][x-1] = 1;
+                    playfield[y+1][x+1] = 1;
+                    draw();
+                    return true;
+                }
+                //===================================================
+                //стоящая кочерга L
+                if (x > 0 && y >= 0 &&
+                    playfield[y+1][x-1] != 2 && playfield[y+1][x] != 2 && playfield[y+1][x+1] != 2 && playfield[y+2][x-1] != 2 &&
+                    playfield[y+1][x] === 1 && playfield[y+2][x] === 1 && playfield[y+2][x+1])
+                {
+                    playfield[y][x] = 0;
+                    playfield[y+2][x] = 0;
+                    playfield[y+2][x+1] = 0;
+                    playfield[y+1][x-1] = 1;
+                    playfield[y+1][x] = 1;
+                    playfield[y+1][x+1] = 1;
+                    playfield[y+2][x-1] = 1;
+                    draw();
+                    return true;
+                }
+                //кочерга-трамплин
+                if (y < playfield.length-1 &&
+                    playfield[y+1][x+1] != 2 && playfield[y+2][x+1] != 2 &&
+                    playfield[y][x+1] === 1 && playfield[y][x+2] === 1 && playfield[y+1][x] === 1)
+                {
+                    playfield[y][x+2] = 0;
+                    playfield[y+1][x] = 0;
+                    playfield[y+1][x+1] = 1;
+                    playfield[y+2][x+1] = 1;
+                    draw();
+                    return true;
+                }
+                //кочерга-вышка
+                if (x < playfield[y].length-2 && 
+                    playfield[y+1][x] != 2 && playfield[y][x+2] != 2 && playfield[y+1][x+2] != 2 &&
+                    playfield[y][x+1] === 1 && playfield[y+1][x+1] === 1 && playfield[y+2][x+1])
+                {
+                    playfield[y][x] = 0;
+                    playfield[y][x+1] = 0;
+                    playfield[y+2][x+1] = 0;
+                    playfield[y+1][x] = 1;
+                    playfield[y][x+2] = 1;
+                    playfield[y+1][x+2] = 1;
+                    draw();
+                    return true;
+                }
+                //лежащая кочерга
+                if (y > 0 &&
+                    playfield[y-1][x-1] != 2 && playfield[y][x-1] != 2 &&
+                    playfield[y+1][x-2] === 1 && playfield[y+1][x-1] === 1 && playfield[y+1][x] === 1)
+                {
+                    playfield[y+1][x-2] = 0;
+                    playfield[y][x] = 0;
+                    playfield[y-1][x-1] = 1;
+                    playfield[y][x-1] = 1;
+                    draw();
+                    return true;
+                }
+                //===============================================================
+                //стоящая обратная кочерга
+                if (x < playfield[y].length -1 &&
+                    playfield[y+2][x] != 2 && playfield[y+1][x-1] != 2 &&
+                    playfield[y+1][x] === 1 && playfield[y+2][x] === 1 && playfield[y+2][x-1] === 1)
+                {
+                    playfield[y][x] = 0;
+                    playfield[y+1][x] = 0;
+                    playfield[y+1][x-1] = 1;
+                    playfield[y+2][x+1] = 1;
+                    draw();
+                    return true;
+                }
+                // лежащая обратная кочерга
+                if (y > 0 &&
+                    playfield[y-1][x] != 2 && playfield[y-1][x+1] != 2 &&
+                    playfield[y+1][x] === 1 && playfield[y+1][x+1] === 1 && playfield[y+1][x+2] === 1)
+                {
+                    playfield[y+1][x+1] = 0;
+                    playfield[y+1][x+2] = 0;
+                    playfield[y-1][x] = 1;
+                    playfield[y-1][x+1] = 1;
+                    draw();
+                    return true;
+                }
+                // обратная кочерга-вышка
+                if (x > 0 &&
+                    playfield[y][x-1] != 2 && playfield[y+1][x+1] != 2 &&
+                    playfield[y][x+1] === 1 && playfield[y+1][x] === 1 && playfield[y+2][x] === 1)
+                {
+                    playfield[y+1][x] = 0;
+                    playfield [y+2][x] = 0;
+                    playfield[y][x-1] = 1;
+                    playfield[y+1][x+1] = 1;
+                    draw();
+                    return true;
+                }
+                // обратная кочерга-трамплин
+                if (y > 0 &&
+                    playfield[y+1][x+1] != 2 && playfield[y-1][x+2] != 2 &&
+                    playfield[y][x+1] === 1 && playfield[y][x+2] && playfield[y+1][x+2] ===1)
+                {
+                    playfield[y][x] = 0;
+                    playfield[y][x+1] = 0;
+                    playfield[y-1][x+2] = 1;
+                    playfield[y+1][x+1] = 1;
+                    draw();
+                    return true;
+                }
+                //лежащая пирамида
+                if (y < playfield.length-2 && playfield[y+2][x] != 2 &&
+                    playfield[y+1][x-1] === 1 && playfield[y+1][x] === 1 && playfield[y+1][x+1] === 1)
+                {
+                    playfield[y+1][x-1] = 0;
+                    playfield[y+2][x] = 1;
+                    draw();
+                    return true;
+                }
+                // пирамида вправо
+                if (x > 0 && playfield[y+1][x-1] != 2 &&
+                    playfield[y+1][x] === 1 && playfield[y+1][x+1] === 1 && playfield[y+2][x] === 1)
+                {
+                    playfield[y][x] = 0;
+                    playfield[y+1][x-1] = 1;
+                    draw();
+                    return true;
+                }
+                // пирамида стоящая
+                if (y > 0 && playfield[y-1][x+1] != 2 &&
+                    playfield[y][x+1] === 1 && playfield[y+1][x+1] === 1 && playfield[y][x+2] === 1)
+                {
+                    playfield[y][x+2] = 0;
+                    playfield[y-1][x+1] = 1;
+                }
+                // пирамида влево
+                if (x < playfield[y].length-1 && playfield[y+1][x+1] != 2 &&
+                    playfield[y+1][x-1] === 1 && playfield[y+1][x] === 1 && playfield[y+2][x] === 1)
+                {
+                    playfield[y+2][x] = 0;
+                    playfield[y+1][x+1] = 1;
+                }
+                //===============================================
+                // молния S
+                if (y < playfield.length-1 &&
+                    playfield[y][x-1] != 2 && playfield[y+2][x] != 2 &&
+                    playfield[y][x+1] === 1 && playfield[y+1][x-1] === 1 && playfield[y+1][x] === 1)
+                {
+                    playfield[y][x] = 0;
+                    playfield[y][x+1] = 0;
+                    playfield[y][x-1] = 1;
+                    playfield[y+2][x] = 1;
+                    draw();
+                    return true;
+                }
+                // стоящая молния
+                if (x < playfield[y].length-2 &&
+                    playfield[y+1][x+2] != 2 && playfield[y+2][x] != 2 &&
+                    playfield[y+1][x] === 1 && playfield[y+1][x+1] === 1 && playfield[y+2][x+1] === 1)
+                {
+                    playfield[y][x] = 0;
+                    playfield[y+1][x] = 0;
+                    playfield[y+1][x+2] = 1;
+                    playfield[y+2][x] = 1;
+                    draw();
+                    return true;
+                }
+                //============================================
+                // обратная молния Z
+                if (playfield[y][x+1] === 1 && playfield[y+1][x+1] === 1 && playfield[y+1][x+2] === 1)
+                {
+                    playfield[y][x] = 0;
+                    playfield[y+1][x+2] = 0;
+                    playfield[y+1][x] = 1;
+                    playfield[y+2][x] = 1;
+                }
+                // стоящая обратная молния
+                if (x < playfield[y].length-1 &&
+                    playfield[y+2][x] != 2 && playfield[y+2][x+1] != 2 &&
+                    playfield[y+1][x] === 1 && playfield[y+1][x-1] === 1 && playfield[y+2][x-1])
+                {
+                    playfield[y][x] = 0;
+                    playfield[y+2][x-1] = 0;
+                    playfield[y+2][x] = 1;
+                    playfield[y+2][x+1] = 1;
+                    draw();
+                    return true;
+                }
+                return true;
+            }
+        }
+    }
+}
