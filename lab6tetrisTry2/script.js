@@ -1,4 +1,6 @@
 let main = document.querySelector('.main');
+const scoreElem = document.getElementById("score");
+const levelElem = document.getElementById("level");
 
 let playfield = [
     [0,0,0,0,0,0,0,0,0,0],
@@ -24,6 +26,9 @@ let playfield = [
 ];
 
 let gameSpeed = 500;
+let score = 0;
+let level = 1;
+let gameOverText = '';
 
 function draw(){
     let mainInnerHTML = "";
@@ -45,7 +50,7 @@ function draw(){
 
 function drawRandomTetro(){
     let nRandom = parseInt(Math.random() * 7);
-    //nRandom = 6;
+    //nRandom = 1;
     switch (nRandom){
         case 0: //палка
             playfield[0][3] = 1;
@@ -180,6 +185,8 @@ function moveTetroRight(){
 
 function removeFullLines(){
     let canRemoveLine = true;
+    let filledLines = 0;
+    checkStopGame();
     for(let y = 0; y < playfield.length; y++){
         for(let x = 0; x < playfield[y].length; x++){
             if (playfield[y][x] != 2){
@@ -190,9 +197,18 @@ function removeFullLines(){
         if (canRemoveLine){
             playfield[y] = [0,0,0,0,0,0,0,0,0,0];
             moveAllDown(y);
+            ++filledLines;
         }
         canRemoveLine = true;
     }
+
+    score += 10*filledLines*filledLines;
+    level = parseInt(score/100) + 1;
+    if (gameSpeed >= 150){
+        gameSpeed -= level*5;
+    }
+    scoreElem.innerHTML = score;
+    levelElem.innerHTML = level;
 }
 
 function moveAllDown(yMax){ //after removing full line
@@ -211,14 +227,51 @@ function fixTetro(){
         for(let x = 0; x < playfield[y].length; x++){
             if (playfield[y][x] === 1){
                 playfield[y][x] = 2;
+                score += 1;
             }
         }
     }
 
     removeFullLines();
     drawRandomTetro();
-    /*playfield[0] = [0,0,0,1,1,0,0,0,0,0];
-    playfield[1] = [0,0,0,1,1,0,0,0,0,0];*/
+}
+
+function checkStopGame(){
+    for(let x = 0; x < playfield[0].length; x++){
+        if (playfield[0][x] === 2){
+            gameOverText = "Game over: level " + level + " score " + score;
+            alert(gameOverText);
+            reset(); 
+        }
+    }
+}
+
+function reset(){
+    playfield = [
+        [0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0]
+    ];
+    score = 0;
+    level = 1;
+    gameSpeed = 500;
 }
 
 drawRandomTetro();
@@ -238,7 +291,7 @@ document.onkeydown = function(e){
         //down
         moveTetroDown();
     }
-    else if (e.keyCode === 32){ //38
+    else if (e.keyCode === 38){ //32
         //rotate
         rotateTetro();
     }
@@ -252,13 +305,6 @@ function startGame(){
 }
 
 setTimeout(startGame, gameSpeed);
-
-
-
-
-
-
-
 
 
 function rotateTetro(){
