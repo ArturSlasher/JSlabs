@@ -1,3 +1,6 @@
+
+// РАБОЧИЙ ВАРИАНТ НА КОСТЫЛЯХ
+
 let main = document.querySelector('.main');
 const scoreElem = document.getElementById("score");
 const levelElem = document.getElementById("level");

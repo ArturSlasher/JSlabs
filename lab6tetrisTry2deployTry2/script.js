@@ -1,9 +1,6 @@
-const express = require("express");
-const app = express();
-const PORT = process.env.PORT || 80;
-app.listen(PORT, () => {
-    console.log("Server has been started");
-});
+
+// НЕПОНЯТНО КАК И ЗАЧЕМ ПРОДУБЛИРОВАННЫЙ РАБОЧИЙ ПРОЕКТ
+// ДЛЯ ДЕПЛОЯ НА HEROKU
 
 let main = document.querySelector('.main');
 const scoreElem = document.getElementById("score");
