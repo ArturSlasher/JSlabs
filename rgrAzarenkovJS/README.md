@@ -1,6 +1,6 @@
-# Password Manager
+# Bank Manager
 
-Password manager is a storage used to store / add / edit / delete passwords.
+Bank manager is a storage used to store / add / edit / delete bank passwords.
 
 Manual:
 
