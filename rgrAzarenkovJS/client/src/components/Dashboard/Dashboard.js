@@ -13,8 +13,8 @@ import {
   deletePassword,
 } from "../../hooks/dashboard.hook";
 
-import PasswordList from "./ListMenu/PasswordList";
-import PasswordPanel from "./PasswordPanel";
+import PasswordList from "./ListMenu/BankList";
+import PasswordPanel from "./BankPanel";
 import Loader from "../Loader";
 
 function Dashboard() {

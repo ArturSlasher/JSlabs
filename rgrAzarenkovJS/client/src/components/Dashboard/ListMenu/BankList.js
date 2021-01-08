@@ -1,7 +1,7 @@
 import React from "react";
 
 import SortPanel from "./SortPanel";
-import PasswordItem from "./PasswordItem";
+import PasswordItem from "./BankItem";
 import CreateButton from "./CreateButton";
 
 function PasswordList(props) {
